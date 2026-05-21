@@ -102,7 +102,7 @@ export const Hero = () => {
           <div className="relative corner-brackets bg-gradient-card border border-border p-1 shadow-card-elevated animate-float">
             <div className="relative aspect-[4/5] overflow-hidden bg-muted">
               <img
-                src="https://www.lakdim.com/assets/img/profile_1.jpg"
+                src="/public/images/profile_1.jpg"
                 alt="Portrait de Merouane Lakdim, ingénieur électronique embarquée"
                 className="w-full h-full object-cover grayscale-[20%] contrast-110"
                 loading="eager"

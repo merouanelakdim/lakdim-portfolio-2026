@@ -1,6 +1,19 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin, Send, Check } from "lucide-react";
+import { Github, Linkedin, Mail, Phone, MapPin, Send, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+const socialLinks = [
+  {
+    href: "https://www.linkedin.com/in/merouane-lakdim/",
+    label: "LinkedIn",
+    icon: Linkedin,
+  },
+  {
+    href: "https://github.com/merouanelakdim",
+    label: "GitHub",
+    icon: Github,
+  },
+];
 
 export const Contact = () => {
   const { toast } = useToast();
@@ -112,6 +125,25 @@ export const Contact = () => {
             <div className="inline-flex items-center gap-3 px-4 py-2 border border-phosphor/30 bg-phosphor/5 font-mono text-xs">
               <span className="w-2 h-2 rounded-full bg-phosphor animate-pulse-glow" />
               <span className="text-phosphor uppercase tracking-widest">cdi · disponible immédiatement</span>
+            </div>
+
+            <div className="space-y-3">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">social</div>
+              <div className="flex flex-wrap gap-3">
+                {socialLinks.map(({ href, label, icon: Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-border bg-background text-foreground hover:border-primary hover:text-primary transition-all"
+                    aria-label={label}
+                  >
+                    <Icon size={16} />
+                    <span className="font-mono text-xs uppercase tracking-widest">{label}</span>
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
 
