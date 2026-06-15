@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Github, Linkedin, Mail, Phone, MapPin, Send, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/context/language-context";
+import { siteCopy } from "@/data/site-copy";
 
 const socialLinks = [
   {
@@ -17,6 +19,9 @@ const socialLinks = [
 
 export const Contact = () => {
   const { toast } = useToast();
+  const { language } = useLanguage();
+  const copy = siteCopy[language];
+  const contact = copy.contact;
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -26,8 +31,8 @@ export const Contact = () => {
     e.preventDefault();
     if (!formspreeEndpoint) {
       toast({
-        title: "Formspree non configuré",
-        description: "Ajoutez VITE_FORMSPREE_ENDPOINT dans votre fichier .env pour activer l'envoi direct.",
+        title: language === "fr" ? "Formspree non configuré" : "Formspree not configured",
+        description: contact.formspreeMissing,
         variant: "destructive",
       });
       return;
@@ -46,7 +51,7 @@ export const Contact = () => {
           name: form.name,
           email: form.email,
           message: form.message,
-          _subject: `Contact portfolio · ${form.name}`,
+          _subject: `${contact.subjectPrefix} ${form.name}`,
         }),
       });
 
@@ -56,12 +61,12 @@ export const Contact = () => {
 
       setSent(true);
       setForm({ name: "", email: "", message: "" });
-      toast({ title: "Message envoyé", description: "Votre message a bien été transmis via Formspree." });
+      toast({ title: language === "fr" ? "Message envoyé" : "Message sent", description: contact.toastSuccess });
       setTimeout(() => setSent(false), 4000);
     } catch {
       toast({
-        title: "Erreur d'envoi",
-        description: "Le message n'a pas pu être envoyé. Vérifiez l'URL Formspree et réessayez.",
+        title: language === "fr" ? "Erreur d'envoi" : "Send error",
+        description: contact.toastError,
         variant: "destructive",
       });
     } finally {
@@ -74,22 +79,19 @@ export const Contact = () => {
       <div className="container">
         <div className="flex items-baseline gap-4 mb-12">
           <span className="font-mono text-xs text-primary uppercase tracking-widest">// 04</span>
-          <h2 className="text-3xl md:text-4xl font-bold">Contact</h2>
+          <h2 className="text-3xl md:text-4xl font-bold">{contact.title}</h2>
           <span className="flex-1 h-px bg-border" />
         </div>
 
         <div className="grid lg:grid-cols-12 gap-10">
-          {/* Left side */}
           <div className="lg:col-span-5 space-y-8">
             <div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">
-                Une <span className="text-primary glow-text">opportunité</span>,<br/>
-                un <span className="text-phosphor">projet</span>,<br/>
-                une <span className="text-foreground">question</span> ?
+                {contact.heading[0]}<br />
+                {contact.heading[1]}<br />
+                {contact.heading[2]}
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Je réponds rapidement. Que ce soit pour un poste en CDI, une mission technique ou simplement échanger sur l'embarqué — n'hésitez pas.
-              </p>
+              <p className="text-muted-foreground leading-relaxed">{contact.body}</p>
             </div>
 
             <div className="space-y-3 font-mono text-sm">
@@ -98,7 +100,7 @@ export const Contact = () => {
                   <Mail size={16} />
                 </div>
                 <div>
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-widest">email</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{contact.email}</div>
                   <div className="text-foreground group-hover:text-primary transition-colors">Merouane@lakdim.com</div>
                 </div>
               </a>
@@ -107,7 +109,7 @@ export const Contact = () => {
                   <Phone size={16} />
                 </div>
                 <div>
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-widest">phone</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{contact.phone}</div>
                   <div className="text-foreground group-hover:text-primary transition-colors">+33 7 45 65 41 94</div>
                 </div>
               </a>
@@ -116,19 +118,19 @@ export const Contact = () => {
                   <MapPin size={16} className="text-primary" />
                 </div>
                 <div>
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-widest">location</div>
-                  <div className="text-foreground">Paris, France</div>
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{contact.location}</div>
+                  <div className="text-foreground">{contact.city}</div>
                 </div>
               </div>
             </div>
 
             <div className="inline-flex items-center gap-3 px-4 py-2 border border-phosphor/30 bg-phosphor/5 font-mono text-xs">
               <span className="w-2 h-2 rounded-full bg-phosphor animate-pulse-glow" />
-              <span className="text-phosphor uppercase tracking-widest">cdi · disponible immédiatement</span>
+              <span className="text-phosphor uppercase tracking-widest">{contact.status}</span>
             </div>
 
             <div className="space-y-3">
-              <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">social</div>
+              <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{contact.social}</div>
               <div className="flex flex-wrap gap-3">
                 {socialLinks.map(({ href, label, icon: Icon }) => (
                   <a
@@ -147,19 +149,18 @@ export const Contact = () => {
             </div>
           </div>
 
-          {/* Form */}
           <form
             onSubmit={handleSubmit}
             className="lg:col-span-7 bg-background border border-border p-6 md:p-8 space-y-5 shadow-card-elevated"
           >
             <div className="flex items-center justify-between font-mono text-xs text-muted-foreground border-b border-border pb-3">
-              <span>// new_message.txt</span>
-              <span className="text-phosphor">● ready</span>
+              <span>{contact.formTitle}</span>
+              <span className="text-phosphor">{contact.ready}</span>
             </div>
 
             <div>
               <label htmlFor="name" className="block font-mono text-[10px] text-primary uppercase tracking-widest mb-2">
-                {"> "}name
+                {"> "}{contact.fields.name}
               </label>
               <input
                 id="name"
@@ -167,13 +168,13 @@ export const Contact = () => {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 className="w-full bg-transparent border-b border-border focus:border-primary py-2 font-mono text-sm text-foreground outline-none transition-colors"
-                placeholder="John Doe"
+                placeholder={contact.placeholders.name}
               />
             </div>
 
             <div>
               <label htmlFor="email" className="block font-mono text-[10px] text-primary uppercase tracking-widest mb-2">
-                {"> "}email
+                {"> "}{contact.fields.email}
               </label>
               <input
                 id="email"
@@ -182,13 +183,13 @@ export const Contact = () => {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 className="w-full bg-transparent border-b border-border focus:border-primary py-2 font-mono text-sm text-foreground outline-none transition-colors"
-                placeholder="john@company.com"
+                placeholder={contact.placeholders.email}
               />
             </div>
 
             <div>
               <label htmlFor="message" className="block font-mono text-[10px] text-primary uppercase tracking-widest mb-2">
-                {"> "}message
+                {"> "}{contact.fields.message}
               </label>
               <textarea
                 id="message"
@@ -197,7 +198,7 @@ export const Contact = () => {
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
                 className="w-full bg-transparent border border-border focus:border-primary p-3 font-mono text-sm text-foreground outline-none transition-colors resize-none"
-                placeholder="Bonjour Merouane, ..."
+                placeholder={contact.placeholders.message}
               />
             </div>
 
@@ -208,15 +209,15 @@ export const Contact = () => {
             >
               {loading ? (
                 <>
-                  <Send size={14} /> envoi...
+                  <Send size={14} /> {contact.sending}
                 </>
               ) : sent ? (
                 <>
-                  <Check size={14} /> ./envoyé
+                  <Check size={14} /> {contact.sent}
                 </>
               ) : (
                 <>
-                  <Send size={14} /> ./envoyer
+                  <Send size={14} /> {contact.send}
                 </>
               )}
             </button>
@@ -224,12 +225,11 @@ export const Contact = () => {
         </div>
       </div>
 
-      {/* Footer */}
       <div className="container mt-20 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs text-muted-foreground">
-        <div>© {new Date().getFullYear()} · Merouane Lakdim · All systems operational.</div>
+        <div>© {new Date().getFullYear()} · Merouane Lakdim · {contact.footerText}</div>
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-phosphor animate-pulse-glow" />
-          <span>build: v1.0 · engineer-terminal</span>
+          <span>{contact.footerBuild}</span>
         </div>
       </div>
     </section>

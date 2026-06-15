@@ -1,7 +1,16 @@
-<<<<<<< HEAD
-# Welcome to your Lovable project
+# Merouane Lakdim Portfolio
 
-TODO: Document your project here
-=======
-# lakdim-portfolio
->>>>>>> 371cde9c73764b1e060ed04e79fa0fc7457dce10
+Portfolio personnel réalisé avec Vite, React, TypeScript et Tailwind CSS.
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+```
